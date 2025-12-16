@@ -1,0 +1,11 @@
+<?php
+
+namespace {{ namespace }};
+
+use Lib\Tenancy\Tenantable;
+use Illuminate\Database\Eloquent\Relations\MorphPivot;
+
+class {{ class }} extends MorphPivot
+{
+    use Tenantable;
+}

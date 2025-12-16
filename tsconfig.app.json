@@ -1,0 +1,29 @@
+{
+    "extends": "@vue/tsconfig/tsconfig.dom.json",
+    "include": [
+        "global.d.ts",
+        "env.d.ts",
+        "inertia.d.ts",
+        "auto-imports.d.ts",
+        "resources/js/**/*",
+        "resources/js/**/*.vue",
+        "./tailwind.config.js"
+    ],
+    "exclude": ["resources/js/**/*.spec.ts", "ai"],
+    "compilerOptions": {
+        "composite": true,
+        "baseUrl": ".",
+        "paths": {
+            "@/*": ["./resources/js/*"],
+            "ziggy-js": ["./vendor/tightenco/ziggy"]
+        },
+        "allowJs": true,
+        "allowSyntheticDefaultImports": true,
+        "experimentalDecorators": true,
+        "emitDecoratorMetadata": true,
+        "lib": ["ESNext", "DOM", "DOM.Iterable"],
+        "verbatimModuleSyntax": true,
+        "jsxImportSource": "preserve",
+        "noImplicitAny": false,
+    }
+}

@@ -1,0 +1,11 @@
+<?php
+
+namespace {{ namespace }};
+
+use Lib\Tenancy\Tenantable;
+use Illuminate\Database\Eloquent\Relations\Pivot;
+
+class {{ class }} extends Pivot
+{
+    use Tenantable;
+}

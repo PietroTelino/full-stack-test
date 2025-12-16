@@ -1,0 +1,20 @@
+{
+    "Unit Test": {
+        "prefix": ["ut"],
+        "body": [
+            "<?php",
+            "",
+            "namespace Tests$1;",
+            "",
+            "use Tests\\TestCase;",
+            "use Illuminate\\Foundation\\Testing\\RefreshDatabase;",
+            "",
+            "class $2 extends TestCase",
+            "{",
+            "    use RefreshDatabase;",
+            "}",
+            ""
+        ],
+        "description": "Criar um template de teste unitário"
+    },
+}

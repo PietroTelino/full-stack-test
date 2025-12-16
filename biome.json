@@ -1,0 +1,74 @@
+{
+	"$schema": "https://biomejs.dev/schemas/2.2.4/schema.json",
+	"vcs": {
+		"enabled": true,
+		"clientKind": "git",
+		"useIgnoreFile": true
+	},
+	"files": {
+		"ignoreUnknown": false,
+		"includes": [
+			"bot-v2/**",
+			"ai/mcp/**",
+			"!**/*.vue",
+			"!**/storage",
+			"resources/js/**/*.ts",
+			"scripts/**/*.ts"
+		]
+	},
+	"formatter": {
+		"enabled": true,
+		"indentStyle": "tab"
+	},
+	"assist": {
+		"enabled": true,
+		"actions": {
+			"source": {
+				"organizeImports": "on"
+			}
+		}
+	},
+	"linter": {
+		"enabled": true,
+		"rules": {
+			"recommended": true,
+			"suspicious": {
+				"noExplicitAny": "off"
+			},
+			"complexity": {
+				"noForEach": "off",
+				"noBannedTypes": "off",
+				"noStaticOnlyClass": "off"
+			},
+			"performance": {
+				"noDelete": "off",
+				"noAccumulatingSpread": "off"
+			},
+			"style": {
+				"noParameterAssign": "error",
+				"useAsConstAssertion": "error",
+				"useDefaultParameterLast": "error",
+				"useEnumInitializers": "error",
+				"useSelfClosingElements": "error",
+				"useSingleVarDeclarator": "error",
+				"noUnusedTemplateLiteral": "error",
+				"useNumberNamespace": "error",
+				"noInferrableTypes": "error",
+				"noUselessElse": "error",
+				"useImportType": "off"
+			},
+			"correctness": {
+				"noUnusedVariables": "off",
+				"noUnusedFunctionParameters": "off",
+				"noConstructorReturn": "off"
+			}
+		}
+	},
+	"javascript": {
+		"formatter": {
+			"quoteStyle": "single",
+			"trailingCommas": "all",
+			"semicolons": "always"
+		}
+	}
+}

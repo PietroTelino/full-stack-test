@@ -1,0 +1,46 @@
+{
+    "eslint.format.enable": true,
+    "laravel-pint.enable": true,
+    "eslint.workingDirectories": ["../"],
+    "files.associations": {
+        "*.css": "tailwindcss",
+        "*.scss": "tailwindcss"
+    },
+    "[php]": {
+        "editor.defaultFormatter": "open-southeners.laravel-pint"
+    },
+    "[json]": {
+        "editor.defaultFormatter": "biomejs.biome"
+    },
+    "[jsonc]": {
+        "editor.defaultFormatter": "biomejs.biome"
+    },
+    "[blade,html]": {
+        "editor.defaultFormatter": "shufo.vscode-blade-formatter"
+    },
+    "[html]": {
+        "editor.defaultFormatter": "rvest.vs-code-prettier-eslint"
+    },
+    "[typescript]": {
+        "editor.defaultFormatter": "biomejs.biome"
+    },
+    "[javascript]": {
+        "editor.defaultFormatter": "biomejs.biome"
+    },
+    "[vue]": {
+        "editor.rulers": [120],
+        "editor.defaultFormatter": "rvest.vs-code-prettier-eslint"
+    },
+    "favorites.resources": [
+        {
+            "filePath": "storage/logs",
+            "group": "Default"
+        }
+    ],
+    "editor.codeActionsOnSave": {
+        // "source.fixAll.biome": "explicit",
+        "source.organizeImports.biome": "explicit"
+    },
+    "favorites.sortOrder": "DESC",
+    "biome.requireConfiguration": true,
+}

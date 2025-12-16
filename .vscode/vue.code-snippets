@@ -1,0 +1,42 @@
+{
+    "Vue SFC": {
+        "prefix": ["vue", "sfc"],
+        "body": ["<script setup>\n\t$2\n</script>", "<template>\n\t$1\n</template>\n"],
+        "description": "Criar um SFC do vue"
+    },
+    "Back Button Link": {
+        "prefix": "back",
+        "body": [
+            "<Button variant=\"ghost\" as-child>",
+            "\t<Link :href=\"back\">Cancelar </Link>",
+            "</Button>"
+        ],
+    },
+    "Form Delete": {
+        "prefix": ["form-del"],
+        "body": [
+            "//delete",
+            "const formDelete = useForm({});",
+            "const selectedToDelete = ref(null);",
+            "function submitDelete() {",
+            "\tformDelete.delete(route('$1', props.$2));",
+            "}"
+        ],
+        "description": "Criar um form de delete"
+    },
+    "Form Delete Template": {
+        "prefix": ["form-del-template"],
+        "body": [
+            "<!-- Delete Confirmation Modal -->",
+            "<ConfirmationModal :show=\"selectedToDelete\" @close=\"selectedToDelete = null\">",
+            "\t<template #title>Deletar $1</template>",
+            "\t<template #content>Você tem certeza que deseja apagar esse $1?</template>",
+            "\t<template #footer>",
+            "\t\t<Button variant=\"ghost\" type=\"button\" @click=\"selectedToDelete = null\">Cancelar</Button>",
+            "\t\t<Button variant=\"destructive\" type=\"button\" class=\"ml-3\" :class=\"{ 'opacity-25': formDelete.processing }\" :disabled=\"formDelete.processing\" @click=\"submitDelete\"> Sim, apagar! </Button>",
+            "\t</template>",
+            "</ConfirmationModal>"
+        ],
+        "description": "Criar um template de form de delete"
+    },
+}
