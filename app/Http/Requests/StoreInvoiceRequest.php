@@ -3,6 +3,8 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
+use Lib\Tenancy\Tenant;
 
 class StoreInvoiceRequest extends FormRequest
 {
@@ -21,10 +23,19 @@ class StoreInvoiceRequest extends FormRequest
      */
     public function rules(): array
     {
+        $tenantId = Tenant::current()?->id();
+
+        $customerExists = Rule::exists('customers', 'id');
+        if ($tenantId && $tenantId !== '0') {
+            $customerExists->where('team_id', $tenantId);
+        }
+
         return [
-            'customer_id' => ['required', 'exists:customers,id'],
-            'status' => ['required', 'string', 'in:draft,pending,paid,overdue,cancelled'],
+            'customer_id' => ['required', $customerExists],
+            'status' => ['required', 'string', 'in:draft,pending,issued,paid,overdue,cancelled'],
+            'issue_date' => ['required', 'date'],
             'due_date' => ['required', 'date', 'after_or_equal:issue_date'],
+            'payment_date' => ['nullable', 'date', 'after_or_equal:issue_date'],
             'metadata' => ['nullable', 'array'],
             'items' => ['required', 'array', 'min:1'],
             'items.*.title' => ['required', 'string', 'max:255'],
