@@ -8,14 +8,14 @@ import {
     BreadcrumbSeparator,
 } from '@/components/ui/breadcrumb';
 import { Link } from '@inertiajs/vue3';
+import type { BreadcrumbItem as SharedBreadcrumbItem } from '@/types';
 
-interface BreadcrumbItemType {
-    title: string;
+interface BreadcrumbPropsItem extends SharedBreadcrumbItem {
     href?: string;
 }
 
 defineProps<{
-    breadcrumbs: BreadcrumbItemType[];
+    breadcrumbs: BreadcrumbPropsItem[];
 }>();
 </script>
 

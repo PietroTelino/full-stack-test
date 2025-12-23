@@ -4,14 +4,28 @@ import { trans } from 'laravel-vue-i18n';
 import { ArrowRightIcon, ArrowLeftIcon } from 'lucide-vue-next';
 import { computed } from 'vue';
 
-const props = defineProps(['links']);
+interface PaginationLink {
+    url: string | null;
+    label: string;
+    active: boolean;
+}
+
+const props = defineProps<{
+    links: PaginationLink[];
+}>();
 
 const previous = computed(() => props.links[0]);
 const next = computed(() => props.links[props.links.length - 1]);
 
-const pages = computed(() =>
-    props.links.filter((link) => ![trans('pagination.previous'), trans('pagination.next')].includes(trans(link.label))),
-);
+const pages = computed(() => {
+    const prevLabel = trans('pagination.previous');
+    const nextLabel = trans('pagination.next');
+
+    return props.links.filter((link) => {
+        const label = trans(link.label);
+        return label !== prevLabel && label !== nextLabel;
+    });
+});
 
 const hasPages = computed(() => props.links.length > 3);
 </script>

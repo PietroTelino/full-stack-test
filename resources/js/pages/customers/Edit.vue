@@ -2,22 +2,13 @@
 import AppLayout from '@/layouts/AppLayout.vue';
 import { Head, router, useForm } from '@inertiajs/vue3';
 import { reactive } from 'vue';
-import { type BreadcrumbItem } from '@/types';
+import { type BreadcrumbItem, type Customer } from '@/types';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { validateCustomerForm } from '@/validations/customer';
-
-interface Customer {
-    id: number;
-    name: string;
-    email: string;
-    phone?: string;
-    address?: string;
-    document?: string;
-}
 
 interface Props {
     customer: Customer;

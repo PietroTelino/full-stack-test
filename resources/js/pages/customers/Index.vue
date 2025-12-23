@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import AppLayout from '@/layouts/AppLayout.vue';
 import { Head, Link, router } from '@inertiajs/vue3';
-import { type BreadcrumbItem } from '@/types';
+import { type BreadcrumbItem, type Customer } from '@/types';
 import { Button } from '@/components/ui/button';
 import {
     Table,
@@ -11,17 +11,7 @@ import {
     TableHeader,
     TableRow,
 } from '@/components/ui/table';
-
-interface Customer {
-    id: number;
-    name: string;
-    email: string;
-    phone?: string;
-    address?: string;
-    document?: string;
-    invoices_count: number;
-    created_at: string;
-}
+import { formatDate } from '@/lib/format';
 
 interface Props {
     customers: {
@@ -53,13 +43,6 @@ const deleteCustomer = (customer: Customer) => {
     }
 };
 
-const formatDate = (date: string) => {
-    return new Date(date).toLocaleDateString('en-US', {
-        year: 'numeric',
-        month: 'short',
-        day: 'numeric',
-    });
-};
 </script>
 
 <template>

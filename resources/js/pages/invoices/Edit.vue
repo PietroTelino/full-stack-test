@@ -1,40 +1,16 @@
 <script setup lang="ts">
 import AppLayout from '@/layouts/AppLayout.vue';
 import { Head, router, useForm } from '@inertiajs/vue3';
-import { type BreadcrumbItem } from '@/types';
+import { type BreadcrumbItem, type Customer, type InvoiceWithItems } from '@/types';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from '@/components/ui/select';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { formatCurrency } from '@/lib/format';
 
-interface Customer {
-    id: number;
-    name: string;
-    email: string;
+interface Props {
+    invoice: InvoiceWithItems;
+    customers: Customer[];
 }
-
-interface InvoiceItem {
-    id?: number;
-    title: string;
-    subtitle: string;
-    quantity: number;
-    unit_price: number;
-}
-
-interface Invoice {
-    id: number;
-    code: string;
-    customer_id: number;
-    status: string;
-    issue_date: string;
-    due_date: string;
     payment_date?: string;
     invoice_items: InvoiceItem[];
 }
@@ -95,13 +71,6 @@ const calculateTotal = () => {
     return form.items.reduce((sum, item) => {
         return sum + item.quantity * item.unit_price;
     }, 0);
-};
-
-const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('en-US', {
-        style: 'currency',
-        currency: 'USD',
-    }).format(amount / 100);
 };
 
 const submit = () => {

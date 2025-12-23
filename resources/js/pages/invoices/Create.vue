@@ -1,27 +1,15 @@
 <script setup lang="ts">
 import AppLayout from '@/layouts/AppLayout.vue';
 import { Head, router, useForm } from '@inertiajs/vue3';
-import { type BreadcrumbItem } from '@/types';
+import { type BreadcrumbItem, type Customer, type InvoiceItem } from '@/types';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from '@/components/ui/select';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { formatCurrency } from '@/lib/format';
 
-interface Customer {
-    id: number;
-    name: string;
-    email: string;
+interface Props {
+    customers: Customer[];
 }
-
-interface InvoiceItem {
-    title: string;
     subtitle: string;
     quantity: number;
     unit_price: number;
@@ -81,13 +69,6 @@ const calculateTotal = () => {
     return form.items.reduce((sum, item) => {
         return sum + item.quantity * item.unit_price;
     }, 0);
-};
-
-const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('en-US', {
-        style: 'currency',
-        currency: 'USD',
-    }).format(amount / 100);
 };
 
 const submit = () => {
