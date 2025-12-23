@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\Customer;
+use Carbon\CarbonInterface;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
@@ -20,11 +21,11 @@ class BankService
      *
      * @param int $invoiceId
      * @param float $amount
-     * @param \Carbon\Carbon $dueDate
+     * @param CarbonInterface $dueDate
      * @return array
-     * @throws \Exception
+     * @throws \\Exception
      */
-    public function generateBillet(int $invoiceId, Customer $customer, float $amount, $dueDate): array
+    public function generateBillet(int $invoiceId, Customer $customer, float $amount, CarbonInterface $dueDate): array
     {
         try {
             $response = Http::timeout(30)

@@ -8,6 +8,7 @@ use App\Models\Customer;
 use App\Actions\IssueInvoice;
 use App\Http\Requests\StoreInvoiceRequest;
 use App\Http\Requests\UpdateInvoiceRequest;
+use Illuminate\Support\Facades\DB;
 
 class InvoiceController extends Controller
 {
@@ -46,32 +47,26 @@ class InvoiceController extends Controller
     {
         $validated = $request->validated();
 
-        // Calculate total amount from items
-        $totalAmount = collect($validated['items'])->sum(function ($item) {
-            return $item['quantity'] * $item['unit_price'];
-        });
+        $invoice = DB::transaction(function () use ($validated) {
+            // Calculate total amount from items
+            $totalAmount = Invoice::calculateItemsTotal($validated['items']);
 
-        // Create invoice
-        $invoice = Invoice::create([
-            'customer_id' => $validated['customer_id'],
-            'status' => $validated['status'],
-            'amount' => $totalAmount,
-            'issue_date' => $validated['issue_date'],
-            'due_date' => $validated['due_date'],
-            'payment_date' => $validated['payment_date'] ?? null,
-            'metadata' => $validated['metadata'] ?? null,
-        ]);
-
-        // Create invoice items
-        foreach ($validated['items'] as $item) {
-            $invoice->invoiceItems()->create([
-                'title' => $item['title'],
-                'subtitle' => $item['subtitle'] ?? null,
-                'quantity' => $item['quantity'],
-                'unit_price' => $item['unit_price'],
-                'amount' => $item['quantity'] * $item['unit_price'],
+            // Create invoice
+            $invoice = Invoice::create([
+                'customer_id' => $validated['customer_id'],
+                'status' => $validated['status'],
+                'amount' => $totalAmount,
+                'issue_date' => $validated['issue_date'],
+                'due_date' => $validated['due_date'],
+                'payment_date' => $validated['payment_date'] ?? null,
+                'metadata' => $validated['metadata'] ?? null,
             ]);
-        }
+
+            // Create invoice items
+            $invoice->syncItems($validated['items']);
+
+            return $invoice;
+        });
 
         return redirect()->route('invoices.show', $invoice)
             ->with('success', 'Invoice created successfully.');
@@ -113,33 +108,20 @@ class InvoiceController extends Controller
     {
         $validated = $request->validated();
 
-        // Calculate total amount from items if provided
-        if (isset($validated['items'])) {
-            $totalAmount = collect($validated['items'])->sum(function ($item) {
-                return $item['quantity'] * $item['unit_price'];
-            });
-            $validated['amount'] = $totalAmount;
-        }
-
-        // Update invoice
-        $invoice->update($validated);
-
-        // Update invoice items if provided
-        if (isset($validated['items'])) {
-            // Delete old items
-            $invoice->invoiceItems()->delete();
-
-            // Create new items
-            foreach ($validated['items'] as $item) {
-                $invoice->invoiceItems()->create([
-                    'title' => $item['title'],
-                    'subtitle' => $item['subtitle'] ?? null,
-                    'quantity' => $item['quantity'],
-                    'unit_price' => $item['unit_price'],
-                    'amount' => $item['quantity'] * $item['unit_price'],
-                ]);
+        DB::transaction(function () use (&$invoice, &$validated) {
+            // Calculate total amount from items if provided
+            if (isset($validated['items'])) {
+                $validated['amount'] = Invoice::calculateItemsTotal($validated['items']);
             }
-        }
+
+            // Update invoice
+            $invoice->update($validated);
+
+            // Update invoice items if provided
+            if (isset($validated['items'])) {
+                $invoice->syncItems($validated['items']);
+            }
+        });
 
         return redirect()->route('invoices.show', $invoice)
             ->with('success', 'Invoice updated successfully.');

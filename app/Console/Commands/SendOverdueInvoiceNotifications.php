@@ -34,9 +34,7 @@ class SendOverdueInvoiceNotifications extends Command
 
         // Find invoices that are overdue
         $overdueInvoices = Invoice::with('customer')
-            ->where('status', 'issued')
-            ->where('due_date', '<', now())
-            ->whereNull('payment_date')
+            ->overdue()
             ->get();
 
         if ($overdueInvoices->isEmpty()) {

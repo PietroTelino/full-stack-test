@@ -4,6 +4,7 @@ namespace Lib\Billing\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use Illuminate\Support\Facades\Validator;
 use Lib\Billing\StripeBillingPortal;
 use Lib\Billing\StripeCheckout;
 use Laravel\Cashier\Cashier;
@@ -17,12 +18,16 @@ class CheckoutController extends Controller
 
     /**
      * Essa implementação leva em consideração a possibilidade de upgrade para o preço anual,
-     * esse cenário se torna fácil pois o `priceId` do plano anual é diferente do `priceId` do plano mensal.
-     *
-     * @param  $priceId  mixed - Stripe Price ID
+     * esse cenário se torna fácil pois o `lookup_key` do plano anual é diferente do `lookup_key` do plano mensal.
      */
-    public function __invoke($priceId)
+    public function __invoke(string $lookup_key)
     {
+        $validated = Validator::make([
+            'lookup_key' => $lookup_key,
+        ], [
+            'lookup_key' => ['required', 'string', 'max:255', 'regex:/^[A-Za-z0-9_\-]+$/'],
+        ])->validate();
+
         /**
          * Não utilizamos o middleware de auth pq o redirect feito lá é para a tela de login.
          * Aqui, queremos levar o usuário para tela de cadastro.
@@ -34,7 +39,13 @@ class CheckoutController extends Controller
         /** @var User */
         $user = request()->user();
 
-        if ($price = Cashier::stripe()->prices->retrieve($priceId, ['expand' => ['product']])) {
+        try {
+            $price = Cashier::stripe()->prices->retrieve($validated['lookup_key'], ['expand' => ['product']]);
+        } catch (\Stripe\Exception\InvalidRequestException) {
+            return response()->noContent(404);
+        }
+
+        if ($price) {
             /**
              * Usuário com assinatura incompleta não deve conseguir fazer uma nova assinatura.
              * Ele precisa fazer o pagamento da assinatura incompleta.

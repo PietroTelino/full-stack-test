@@ -5,6 +5,8 @@ use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Redis;
 use Illuminate\Support\Str;
 
+$codePattern = 'BLT\\d{8}[A-Z0-9]{8}';
+
 /**
  * Fake Bank Development API
  * Simulates a bank API for generating and managing bank billets
@@ -16,10 +18,10 @@ use Illuminate\Support\Str;
  */
 Route::post('/bank-dev/api/billets', function () {
     $validated = request()->validate([
-        'name' => 'required|string',
-        'document' => 'required|string',
-        'amount' => 'required|numeric|min:0.01',
-        'due_date' => 'required|date',
+        'name' => ['required', 'string', 'max:255'],
+        'document' => ['required', 'string', 'max:100'],
+        'amount' => ['required', 'numeric', 'min:0.01'],
+        'due_date' => ['required', 'date', 'after_or_equal:today'],
     ]);
 
     // Generate a unique billet code (similar to real bank formats)
@@ -88,7 +90,7 @@ Route::get('/bank-dev/api/billets/{code}', function (string $code) {
     }
 
     return response()->json($billetData, 200);
-});
+})->where('code', $codePattern);
 
 /**
  * Cancel a bank billet (soft delete)
@@ -119,7 +121,7 @@ Route::delete('/bank-dev/api/billets/{code}', function (string $code) {
         'message' => 'Billet cancelled successfully',
         'data' => $billetData,
     ], 200);
-});
+})->where('code', $codePattern);
 
 /**
  * Manually mark a billet as paid (for testing)
@@ -157,7 +159,7 @@ Route::post('/bank-dev/api/billets/{code}/pay', function (string $code) {
         'message' => 'Billet marked as paid successfully',
         'data' => $billetData,
     ], 200);
-});
+})->where('code', $codePattern);
 
 /**
  * List all billets (for debugging)
