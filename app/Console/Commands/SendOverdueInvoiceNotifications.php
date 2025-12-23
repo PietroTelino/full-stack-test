@@ -13,8 +13,7 @@ class SendOverdueInvoiceNotifications extends Command
      *
      * @var string
      */
-    protected $signature = 'invoices:notify-overdue
-                            {--dry-run : Run without sending notifications}';
+    protected $signature = 'invoices:notify-overdue {--dry-run : Run without sending notifications}';
 
     /**
      * The console command description.

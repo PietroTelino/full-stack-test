@@ -2,6 +2,8 @@
 
 namespace App\Http\Requests;
 
+use App\Rules\ValidCpfOrCnpj;
+use App\Rules\ValidPhoneNumber;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 use Lib\Tenancy\Tenant;
@@ -33,9 +35,9 @@ class StoreCustomerRequest extends FormRequest
         return [
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'email', 'max:255', $emailUnique],
-            'phone' => ['nullable', 'string', 'max:50'],
+            'phone' => ['nullable', 'string', 'max:50', new ValidPhoneNumber()],
             'address' => ['nullable', 'string', 'max:500'],
-            'document' => ['nullable', 'string', 'max:100'],
+            'document' => ['nullable', 'string', 'max:100', new ValidCpfOrCnpj()],
         ];
     }
 }
