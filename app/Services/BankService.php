@@ -13,7 +13,7 @@ class BankService
 
     public function __construct()
     {
-        $this->baseUrl = config('services.bank.url', 'http://localhost/dev-bank');
+        $this->baseUrl = rtrim(config('services.bank.url', 'http://localhost/dev-bank'), '/');
     }
 
     /**
@@ -23,7 +23,7 @@ class BankService
      * @param float $amount
      * @param CarbonInterface $dueDate
      * @return array
-     * @throws \\Exception
+     * @throws \Exception
      */
     public function generateBillet(int $invoiceId, Customer $customer, float $amount, CarbonInterface $dueDate): array
     {
