@@ -1,9 +1,15 @@
 {
-    "include": ["resources/js/**/*.ts", "resources/js/**/*.spec.ts", "env.d.ts"],
+    "include": [
+        "resources/js/**/*.ts",
+        "resources/js/**/*.spec.ts",
+        "resources/js/**/*.test.ts",
+        "resources/js/tests/**/*.ts",
+        "env.d.ts"
+    ],
     "compilerOptions": {
         "composite": true,
-        "types": ["bun", "@types/bun"],
-        "lib": ["ESNext"],
+        "types": ["vitest", "vitest/globals", "bun", "@types/bun"],
+        "lib": ["ESNext", "DOM"],
         "target": "ESNext",
         "module": "Preserve",
         "moduleDetection": "force",
@@ -19,8 +25,8 @@
         "noUncheckedIndexedAccess": true,
         "noImplicitOverride": true,
         "paths": {
-            "@/*": ["./resources/js/*"],
-            "ziggy-js": ["./vendor/tightenco/ziggy"]
+        "@/*": ["./resources/js/*"],
+        "ziggy-js": ["./vendor/tightenco/ziggy"]
         }
     }
 }

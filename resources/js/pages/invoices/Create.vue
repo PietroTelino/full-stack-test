@@ -10,14 +10,6 @@ import { formatCurrency } from '@/lib/format';
 interface Props {
     customers: Customer[];
 }
-    subtitle: string;
-    quantity: number;
-    unit_price: number;
-}
-
-interface Props {
-    customers: Customer[];
-}
 
 defineProps<Props>();
 
