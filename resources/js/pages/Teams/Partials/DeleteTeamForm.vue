@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 import { ref } from 'vue';
 import { useForm } from '@inertiajs/vue3';
 import HeadingSmall from '@/components/HeadingSmall.vue';
@@ -20,10 +20,6 @@ const props = defineProps({
 
 const confirmingTeamDeletion = ref(false);
 const form = useForm({});
-
-const confirmTeamDeletion = () => {
-    confirmingTeamDeletion.value = true;
-};
 
 const deleteTeam = () => {
     form.delete(route('teams.destroy', props.team), {

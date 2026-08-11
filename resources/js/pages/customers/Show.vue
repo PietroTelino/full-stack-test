@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import AppLayout from '@/layouts/AppLayout.vue';
 import { Head, Link, router } from '@inertiajs/vue3';
-import { type BreadcrumbItem } from '@/types';
+import { type BreadcrumbItem, type Customer, type InvoiceSummary } from '@/types';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import {
@@ -13,29 +13,11 @@ import {
     TableRow,
 } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
-
-interface Invoice {
-    id: number;
-    code: string;
-    amount: number;
-    status: string;
-    issue_date: string;
-    due_date: string;
-}
-
-interface Customer {
-    id: number;
-    name: string;
-    email: string;
-    phone?: string;
-    address?: string;
-    document?: string;
-    created_at: string;
-    invoices?: Invoice[];
-}
+import { formatCurrency, formatDate } from '@/lib/format';
+import { getInvoiceStatusColor } from '@/lib/invoice';
 
 interface Props {
-    customer: Customer;
+    customer: Customer & { invoices?: InvoiceSummary[] };
 }
 
 const props = defineProps<Props>();
@@ -62,31 +44,6 @@ const deleteCustomer = () => {
     }
 };
 
-const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('en-US', {
-        style: 'currency',
-        currency: 'USD',
-    }).format(amount / 100);
-};
-
-const formatDate = (date: string) => {
-    return new Date(date).toLocaleDateString('en-US', {
-        year: 'numeric',
-        month: 'short',
-        day: 'numeric',
-    });
-};
-
-const getStatusColor = (status: string) => {
-    const colors: Record<string, string> = {
-        draft: 'default',
-        pending: 'secondary',
-        paid: 'default',
-        overdue: 'destructive',
-        cancelled: 'outline',
-    };
-    return colors[status] || 'default';
-};
 
 const deleteInvoice = (invoice: Invoice) => {
     if (confirm(`Are you sure you want to delete invoice ${invoice.code}?`)) {
@@ -174,7 +131,7 @@ const deleteInvoice = (invoice: Invoice) => {
                                 <TableCell class="font-medium">{{ invoice.code }}</TableCell>
                                 <TableCell>{{ formatCurrency(invoice.amount) }}</TableCell>
                                 <TableCell>
-                                    <Badge :variant="getStatusColor(invoice.status)">
+                                    <Badge :variant="getInvoiceStatusColor(invoice.status)">
                                         {{ invoice.status }}
                                     </Badge>
                                 </TableCell>

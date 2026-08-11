@@ -20,9 +20,14 @@ class EnsureCurrentTeamExists
             // If the user has no current team, switch to the first available team.
             // This scenario can happen when the user is logged in a team and the team is deleted.
             if (is_null(Auth::user()->current_team_id)) {
-                Auth::user()->switchTeam(Auth::user()->allTeams()->first());
+                $team = Auth::user()->allTeams()->first();
+
+                if ($team) {
+                    Auth::user()->switchTeam($team);
+                }
             }
         }
+
         return $next($request);
     }
 }

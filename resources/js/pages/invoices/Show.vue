@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import AppLayout from '@/layouts/AppLayout.vue';
 import { Head, Link, router } from '@inertiajs/vue3';
-import { type BreadcrumbItem } from '@/types';
+import { type BreadcrumbItem, type InvoiceWithItems } from '@/types';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -13,44 +13,11 @@ import {
     TableHeader,
     TableRow,
 } from '@/components/ui/table';
-
-interface InvoiceItem {
-    id: number;
-    title: string;
-    subtitle?: string;
-    quantity: number;
-    unit_price: number;
-    amount: number;
-}
-
-interface BankBillet {
-    id: number;
-    code: string;
-    barcode?: string;
-    expires_at?: string;
-}
-
-interface Invoice {
-    id: number;
-    code: string;
-    amount: number;
-    status: string;
-    issue_date: string;
-    due_date: string;
-    payment_date?: string;
-    customer: {
-        id: number;
-        name: string;
-        email: string;
-        phone?: string;
-        address?: string;
-    };
-    invoice_items: InvoiceItem[];
-    bank_billet?: BankBillet;
-}
+import { formatCurrency, formatDate } from '@/lib/format';
+import { getInvoiceStatusColor } from '@/lib/invoice';
 
 interface Props {
-    invoice: Invoice;
+    invoice: InvoiceWithItems;
 }
 
 const props = defineProps<Props>();
@@ -65,32 +32,6 @@ const breadcrumbs: BreadcrumbItem[] = [
         href: `/invoices/${props.invoice.id}`,
     },
 ];
-
-const getStatusColor = (status: string) => {
-    const colors: Record<string, string> = {
-        draft: 'default',
-        pending: 'secondary',
-        paid: 'default',
-        overdue: 'destructive',
-        cancelled: 'outline',
-    };
-    return colors[status] || 'default';
-};
-
-const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('en-US', {
-        style: 'currency',
-        currency: 'USD',
-    }).format(amount / 100);
-};
-
-const formatDate = (date: string) => {
-    return new Date(date).toLocaleDateString('en-US', {
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric',
-    });
-};
 
 const deleteInvoice = () => {
     if (confirm('Are you sure you want to delete this invoice?')) {
@@ -115,7 +56,7 @@ const issueInvoice = () => {
             <div class="flex items-center justify-between">
                 <div>
                     <h1 class="text-3xl font-bold">Invoice {{ invoice.code }}</h1>
-                    <Badge :variant="getStatusColor(invoice.status)" class="mt-2">
+                    <Badge :variant="getInvoiceStatusColor(invoice.status)" class="mt-2">
                         {{ invoice.status }}
                     </Badge>
                 </div>
@@ -166,15 +107,17 @@ const issueInvoice = () => {
                     <CardContent class="space-y-2">
                         <div>
                             <div class="text-sm text-muted-foreground">Issue Date</div>
-                            <div class="font-medium">{{ formatDate(invoice.issue_date) }}</div>
+                            <div class="font-medium">{{ formatDate(invoice.issue_date, { year: 'numeric', month: 'long', day: 'numeric' }) }}</div>
                         </div>
                         <div>
                             <div class="text-sm text-muted-foreground">Due Date</div>
-                            <div class="font-medium">{{ formatDate(invoice.due_date) }}</div>
+                            <div class="font-medium">{{ formatDate(invoice.due_date, { year: 'numeric', month: 'long', day: 'numeric' }) }}</div>
                         </div>
                         <div v-if="invoice.payment_date">
                             <div class="text-sm text-muted-foreground">Payment Date</div>
-                            <div class="font-medium">{{ formatDate(invoice.payment_date) }}</div>
+                            <div class="font-medium">
+                                {{ formatDate(invoice.payment_date, { year: 'numeric', month: 'long', day: 'numeric' }) }}
+                            </div>
                         </div>
                         <div>
                             <div class="text-sm text-muted-foreground">Total Amount</div>
@@ -206,7 +149,9 @@ const issueInvoice = () => {
                     </div>
                     <div v-if="invoice.bank_billet.expires_at">
                         <div class="text-sm text-muted-foreground">Expires At</div>
-                        <div class="font-medium">{{ formatDate(invoice.bank_billet.expires_at) }}</div>
+                        <div class="font-medium">
+                            {{ formatDate(invoice.bank_billet.expires_at, { year: 'numeric', month: 'long', day: 'numeric' }) }}
+                        </div>
                     </div>
                 </CardContent>
             </Card>

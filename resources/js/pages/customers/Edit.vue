@@ -1,21 +1,14 @@
 <script setup lang="ts">
 import AppLayout from '@/layouts/AppLayout.vue';
 import { Head, router, useForm } from '@inertiajs/vue3';
-import { type BreadcrumbItem } from '@/types';
+import { reactive } from 'vue';
+import { type BreadcrumbItem, type Customer } from '@/types';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-
-interface Customer {
-    id: number;
-    name: string;
-    email: string;
-    phone?: string;
-    address?: string;
-    document?: string;
-}
+import { validateCustomerForm } from '@/validations/customer';
 
 interface Props {
     customer: Customer;
@@ -46,7 +39,31 @@ const form = useForm({
     document: props.customer.document || '',
 });
 
+/**
+ * Erros de validação no FRONT (client-side)
+ */
+const clientErrors = reactive<Record<string, string>>({});
+
+/**
+ * Validação do formulário (antes do submit)
+ */
+const validateForm = (): boolean => {
+    Object.keys(clientErrors).forEach((key) => delete clientErrors[key]);
+
+    const errors = validateCustomerForm({
+        email: form.email,
+        phone: form.phone,
+        document: form.document,
+    });
+
+    Object.assign(clientErrors, errors);
+
+    return Object.keys(clientErrors).length === 0;
+};
+
 const submit = () => {
+    if (!validateForm()) return;
+
     form.put(`/customers/${props.customer.id}`);
 };
 </script>
@@ -87,8 +104,11 @@ const submit = () => {
                                     placeholder="john@example.com"
                                     required
                                 />
-                                <p v-if="form.errors.email" class="text-sm text-destructive">
-                                    {{ form.errors.email }}
+                                <p
+                                    v-if="clientErrors.email || form.errors.email"
+                                    class="text-sm text-destructive"
+                                >
+                                    {{ clientErrors.email || form.errors.email }}
                                 </p>
                             </div>
 
@@ -99,8 +119,11 @@ const submit = () => {
                                     v-model="form.phone"
                                     placeholder="+1 (555) 123-4567"
                                 />
-                                <p v-if="form.errors.phone" class="text-sm text-destructive">
-                                    {{ form.errors.phone }}
+                                <p
+                                    v-if="clientErrors.phone || form.errors.phone"
+                                    class="text-sm text-destructive"
+                                >
+                                    {{ clientErrors.phone || form.errors.phone }}
                                 </p>
                             </div>
 
@@ -111,8 +134,11 @@ const submit = () => {
                                     v-model="form.document"
                                     placeholder="123-45-6789"
                                 />
-                                <p v-if="form.errors.document" class="text-sm text-destructive">
-                                    {{ form.errors.document }}
+                                <p
+                                    v-if="clientErrors.document || form.errors.document"
+                                    class="text-sm text-destructive"
+                                >
+                                    {{ clientErrors.document || form.errors.document }}
                                 </p>
                             </div>
 

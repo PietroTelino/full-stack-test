@@ -11,7 +11,7 @@ import { logout } from '@/routes';
 import { edit } from '@/routes/profile';
 import type { User } from '@/types';
 import { Link, router } from '@inertiajs/vue3';
-import { ArrowRight, CheckCircleIcon, CheckIcon, LogOut, Settings, Users2 } from 'lucide-vue-next';
+import { ArrowRight, CheckIcon, LogOut, Settings, Users2 } from 'lucide-vue-next';
 import { DropdownMenuPortal, DropdownMenuSubContent, DropdownMenuSubTrigger } from 'reka-ui';
 
 interface Props {

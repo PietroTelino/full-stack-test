@@ -49,10 +49,11 @@ class TenancyServiceProvider extends ServiceProvider
             if (! $event->user->current_team_id) {
                 return;
             }
+
             event(new MakingTenantCurrent(
                 $event->user,
                 $event->user->current_team_id,
-                $event->user->timezone || config('app.timezone')
+                $event->user->timezone ?: config('app.timezone')
             ));
         });
 
@@ -66,7 +67,7 @@ class TenancyServiceProvider extends ServiceProvider
             MakingTenantCurrent::dispatch(
                 $event->token->tokenable,
                 $event->token->team_id,
-                $event->token->tokenable->timezone || config('app.timezone')
+                $event->token->tokenable->timezone ?: config('app.timezone')
             );
         });
 
@@ -77,12 +78,13 @@ class TenancyServiceProvider extends ServiceProvider
     // O tenant é definido quando um usuário é autenticado
     protected function configureRequest()
     {
-        // Por padrão, o current tenant não tem acesso a nenhum model (team_id = 0)!
-        // A menos que o tenant seja o landlord, e que é explicitamente configurado pelo método asLandlord.
-        Tenant::makeCurrent(new TenantId(request()->get('team_id', 0)));
+        // Por padrão, antes de autenticar, não assumimos tenant via request.
+        // Isso evita tenant spoofing (ex.: ?team_id=123) em qualquer rota que
+        // toque em models tenant-aware antes do Authenticated/TokenAuthenticated.
+        Tenant::makeCurrent(new TenantId('0'), config('app.timezone', 'UTC'));
 
         // Quando um usuário é deslogado, reseta-se o tenant atual.
-        Event::listen(Logout::class, fn () => [Tenant::reset(), Tenant::makeCurrent(new TenantId(0))]);
+        Event::listen(Logout::class, fn () => [Tenant::reset(), Tenant::makeCurrent(new TenantId('0'), config('app.timezone', 'UTC'))]);
     }
 
     // Adiciona o contexto do tenant (team_id) ao job

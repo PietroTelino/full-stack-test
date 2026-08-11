@@ -13,8 +13,7 @@ class SendOverdueInvoiceNotifications extends Command
      *
      * @var string
      */
-    protected $signature = 'invoices:notify-overdue
-                            {--dry-run : Run without sending notifications}';
+    protected $signature = 'invoices:notify-overdue {--dry-run : Run without sending notifications}';
 
     /**
      * The console command description.
@@ -35,9 +34,7 @@ class SendOverdueInvoiceNotifications extends Command
 
         // Find invoices that are overdue
         $overdueInvoices = Invoice::with('customer')
-            ->where('status', 'issued')
-            ->where('due_date', '<', now())
-            ->whereNull('payment_date')
+            ->overdue()
             ->get();
 
         if ($overdueInvoices->isEmpty()) {

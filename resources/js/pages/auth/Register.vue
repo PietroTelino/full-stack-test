@@ -100,8 +100,9 @@ import { Form, Head } from '@inertiajs/vue3';
                     :href="login()"
                     class="underline underline-offset-4"
                     :tabindex="6"
-                    >Log in</TextLink
                 >
+                    Log in
+                </TextLink>
             </div>
         </Form>
     </AuthBase>

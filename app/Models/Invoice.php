@@ -55,6 +55,28 @@ class Invoice extends Model
         return $this->hasOne(BankBillet::class);
     }
 
+    public static function calculateItemsTotal(array $items): float
+    {
+        return collect($items)->sum(function (array $item): float {
+            return $item['quantity'] * $item['unit_price'];
+        });
+    }
+
+    public function syncItems(array $items): void
+    {
+        $this->invoiceItems()->delete();
+
+        foreach ($items as $item) {
+            $this->invoiceItems()->create([
+                'title' => $item['title'],
+                'subtitle' => $item['subtitle'] ?? null,
+                'quantity' => $item['quantity'],
+                'unit_price' => $item['unit_price'],
+                'amount' => $item['quantity'] * $item['unit_price'],
+            ]);
+        }
+    }
+
     /**
      * Check if the invoice is overdue
      */

@@ -21,7 +21,7 @@ const breadcrumbItems: BreadcrumbItem[] = [
     },
 ];
 
-const props = defineProps<{
+defineProps<{
     team: any;
     availableRoles: any[];
     permissions: any;
