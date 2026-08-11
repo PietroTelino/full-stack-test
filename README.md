@@ -39,6 +39,103 @@ Acesso:
 - App: http://127.0.0.1:8000
 - Vite: http://localhost:5173
 
+## 🔍 Análise de Qualidade com SonarQube
+
+O projeto possui configuração para análise estática de código utilizando o **SonarQube**, permitindo identificar problemas de qualidade, segurança, manutenibilidade e duplicação de código.
+
+A configuração da análise está definida no arquivo:
+
+```text
+sonar-project.properties
+```
+
+O escopo inclui o código backend em **Laravel/PHP** e o frontend em **Vue/TypeScript**, ignorando dependências, arquivos gerados e diretórios que não fazem parte do código-fonte da aplicação.
+
+### Pré-requisitos
+
+- Docker
+- SonarQube Community Build
+- Token de análise do SonarQube
+
+### Subindo o SonarQube
+
+Caso o container do SonarQube ainda não tenha sido criado:
+
+```bash
+docker run -d \
+  --name sonarqube \
+  -p 9000:9000 \
+  sonarqube:community
+```
+
+Caso o container já exista, basta iniciá-lo:
+
+```bash
+docker start sonarqube
+```
+
+Após a inicialização, o SonarQube estará disponível em:
+
+```text
+http://localhost:9000
+```
+
+### Configuração do projeto
+
+O arquivo `sonar-project.properties` contém a configuração utilizada pelo scanner:
+
+```properties
+sonar.projectKey=Desafio-T-cnico-Full-Stack---Leet
+sonar.projectName=Desafio Técnico Full Stack - Leet
+
+sonar.sources=app,resources/js,resources/views,routes
+sonar.tests=tests,resources/js/tests
+
+sonar.exclusions=\
+resources/js/tests/**,\
+vendor/**,\
+node_modules/**,\
+storage/**,\
+bootstrap/cache/**,\
+public/build/**
+
+sonar.sourceEncoding=UTF-8
+```
+
+### Executando a análise
+
+Primeiro, gere um **Project Token** no SonarQube.
+
+O token deve ser mantido apenas localmente e **não deve ser adicionado ao repositório**.
+
+Na raiz do projeto, execute:
+
+```bash
+docker run --rm \
+  -e SONAR_HOST_URL="http://host.docker.internal:9000" \
+  -e SONAR_TOKEN="SEU_TOKEN" \
+  -v "$(pwd):/usr/src" \
+  sonarsource/sonar-scanner-cli
+```
+
+Substitua `SEU_TOKEN` pelo token gerado no SonarQube.
+
+Após a execução, o resultado da análise estará disponível no dashboard do projeto no SonarQube:
+
+```text
+http://localhost:9000
+```
+
+A análise permite acompanhar, entre outras métricas:
+
+- Duplicação de código
+- Bugs e possíveis problemas de confiabilidade
+- Vulnerabilidades e hotspots de segurança
+- Code smells
+- Manutenibilidade
+- Complexidade
+- Cobertura de testes
+
 ## 📋 Sobre o Projeto
 Este é um sistema básico de **faturamento e cobrança** (billing) que permite:
 - ✅ Gerenciar clientes (CRUD completo)
