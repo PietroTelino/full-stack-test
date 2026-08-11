@@ -1,5 +1,6 @@
 x-profile: &profile
-    WWWUSER: '${WWWUSER}'
+    WWWUSER: '${WWWUSER:-1000}'
+    WWWGROUP: '${WWWGROUP:-1000}'
     LARAVEL_SAIL: 1
     XDEBUG_MODE: '${SAIL_XDEBUG_MODE:-off}'
     XDEBUG_CONFIG: '${SAIL_XDEBUG_CONFIG:-client_host=host.docker.internal}'
@@ -11,7 +12,7 @@ x-laravel:
             context: './vendor/laravel/sail/runtimes/8.5'
             dockerfile: Dockerfile
             args:
-                WWWGROUP: '${WWWGROUP}'
+                WWWGROUP: '${WWWGROUP:-1000}'
         image: 'sail-8.5/app'
         extra_hosts:
             - 'host.docker.internal:host-gateway'
@@ -62,8 +63,8 @@ services:
             - '${FORWARD_DB_PORT:-5432}:5432'
         environment:
             PGPASSWORD: '${DB_PASSWORD:-secret}'
-            POSTGRES_DB: '${DB_DATABASE}'
-            POSTGRES_USER: '${DB_USERNAME}'
+            POSTGRES_DB: '${DB_DATABASE:-laravel}'
+            POSTGRES_USER: '${DB_USERNAME:-sail}'
             POSTGRES_PASSWORD: '${DB_PASSWORD:-secret}'
         volumes:
             - 'sail-pgsql:/var/lib/postgresql'
@@ -76,9 +77,9 @@ services:
                 - pg_isready
                 - '-q'
                 - '-d'
-                - '${DB_DATABASE}'
+                - '${DB_DATABASE:-laravel}'
                 - '-U'
-                - '${DB_USERNAME}'
+                - '${DB_USERNAME:-sail}'
             retries: 3
             timeout: 5s
     redis:
